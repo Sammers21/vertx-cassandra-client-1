@@ -15,13 +15,13 @@
  */
 package io.vertx.cassandra;
 
-import com.datastax.driver.core.Cluster;
+import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.CqlSessionBuilder;
 import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.json.JsonObject;
 
 import java.net.InetSocketAddress;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Eclipse Vert.x Cassandra client options.
@@ -41,32 +41,21 @@ public class CassandraClientOptions {
    * Default host for connecting with Cassandra service.
    */
   public static final String DEFAULT_HOST = "localhost";
-
-  private Cluster.Builder builder;
+  
+  private CqlSessionBuilder builder;
   private String keyspace;
 
   /**
    * Default constructor.
    */
   public CassandraClientOptions() {
-    this(Cluster.builder());
-    setPort(DEFAULT_PORT);
+    this(CqlSession.builder());
   }
 
   /**
-   * Copy constructor.
+   * Constructor using an existing {@link CqlSessionBuilder} instance.
    */
-  public CassandraClientOptions(CassandraClientOptions other) {
-    this(Cluster.builder());
-    setPort(DEFAULT_PORT);
-    setContactPoints(other.getContactPoints());
-    keyspace = other.keyspace;
-  }
-
-  /**
-   * Constructor using an existing {@link Cluster.Builder} instance.
-   */
-  public CassandraClientOptions(Cluster.Builder builder) {
+  public CassandraClientOptions(CqlSessionBuilder builder) {
     this.builder = builder;
   }
 
@@ -95,21 +84,10 @@ public class CassandraClientOptions {
    * @param contactPoints the list of hosts
    * @return a reference to this, so the API can be used fluently
    */
-  public CassandraClientOptions setContactPoints(List<String> contactPoints) {
-    for (String contactPoint : contactPoints) {
+  public CassandraClientOptions setContactPoints(List<InetSocketAddress> contactPoints) {
+    for (InetSocketAddress contactPoint : contactPoints) {
       builder.addContactPoint(contactPoint);
     }
-    return this;
-  }
-
-  /**
-   * Set which port should be used for all the hosts to connect to a cassandra service.
-   *
-   * @param port the port
-   * @return a reference to this, so the API can be used fluently
-   */
-  public CassandraClientOptions setPort(int port) {
-    builder.withPort(port);
     return this;
   }
 
@@ -118,22 +96,15 @@ public class CassandraClientOptions {
    * @param address the address
    * @return  a reference to this, so the API can be used fluently
    */
-  public CassandraClientOptions addContactPoint(String address) {
+  public CassandraClientOptions addContactPoint(InetSocketAddress address) {
     builder.addContactPoint(address);
     return this;
   }
 
   /**
-   * @return list of address used by the client for connecting with a cassandra service
-   */
-  public List<String> getContactPoints() {
-    return builder.getContactPoints().stream().map(InetSocketAddress::toString).collect(Collectors.toList());
-  }
-
-  /**
    * @return a cluster builder, which will be used by the client
    */
-  public Cluster.Builder dataStaxClusterBuilder() {
+  public CqlSessionBuilder dataStaxClusterBuilder() {
     return builder;
   }
 
@@ -153,6 +124,7 @@ public class CassandraClientOptions {
    */
   public CassandraClientOptions setKeyspace(String keyspace) {
     this.keyspace = keyspace;
+    builder.withKeyspace(keyspace);
     return this;
   }
 }

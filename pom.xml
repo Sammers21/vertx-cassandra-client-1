@@ -16,13 +16,15 @@
     <!--
     Update these properties in the vertx-lang-* modules too
      -->
-    <datastax-driver.minor.version>3.5</datastax-driver.minor.version>
+    <datastax-driver.minor.version>4.2</datastax-driver.minor.version>
     <datastax-driver.version>${datastax-driver.minor.version}.0</datastax-driver.version>
+    <cassandra-unit-datastax-driver.version>3.3.0</cassandra-unit-datastax-driver.version>
     <junit.version>4.12</junit.version>
     <slf4j.version>1.7.21</slf4j.version>
     <guava.version>20.0</guava.version>
     <cassandra-unit.version>3.3.0.2</cassandra-unit.version>
     <logback.version>1.2.3</logback.version>
+    <vertx-completable-future.version>0.1.2</vertx-completable-future.version>
   </properties>
 
   <dependencyManagement>
@@ -48,8 +50,8 @@
 
     <!-- 3rd party -->
     <dependency>
-      <groupId>com.datastax.cassandra</groupId>
-      <artifactId>cassandra-driver-core</artifactId>
+      <groupId>com.datastax.oss</groupId>
+      <artifactId>java-driver-core</artifactId>
       <version>${datastax-driver.version}</version>
       <exclusions>
         <exclusion>
@@ -63,18 +65,14 @@
       </exclusions>
     </dependency>
     <dependency>
-      <groupId>com.datastax.cassandra</groupId>
-      <artifactId>cassandra-driver-mapping</artifactId>
+      <groupId>com.datastax.oss</groupId>
+      <artifactId>java-driver-mapper-runtime</artifactId>
       <version>${datastax-driver.version}</version>
       <optional>true</optional>
       <exclusions>
         <exclusion>
           <groupId>org.slf4j</groupId>
           <artifactId>slf4j-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.google.guava</groupId>
-          <artifactId>guava</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -88,6 +86,17 @@
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
       <version>${guava.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>me.escoffier.vertx</groupId>
+      <artifactId>vertx-completable-future</artifactId>
+      <version>${vertx-completable-future.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>io.vertx</groupId>
+          <artifactId>vertx-core</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- Vert.x dependencies -->
@@ -120,6 +129,23 @@
         <exclusion>
           <groupId>org.slf4j</groupId>
           <artifactId>slf4j-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <!-- This dependency for getting cassandra-unit works -->
+    <dependency>
+      <groupId>com.datastax.cassandra</groupId>
+      <artifactId>cassandra-driver-core</artifactId>
+      <version>${cassandra-unit-datastax-driver.version}</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.google.guava</groupId>
+          <artifactId>guava</artifactId>
         </exclusion>
       </exclusions>
     </dependency>

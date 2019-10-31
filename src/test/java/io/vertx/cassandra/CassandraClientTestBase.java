@@ -15,12 +15,8 @@
  */
 package io.vertx.cassandra;
 
-import com.datastax.driver.core.Row;
-import io.vertx.core.AsyncResult;
-import io.vertx.core.Context;
-import io.vertx.core.Future;
-import io.vertx.core.Handler;
-import io.vertx.core.Vertx;
+import com.datastax.oss.driver.api.core.cql.Row;
+import io.vertx.core.*;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 import org.cassandraunit.CQLDataLoader;
@@ -31,12 +27,14 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 
+import java.net.InetSocketAddress;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
+import static io.vertx.cassandra.CassandraClientOptions.DEFAULT_HOST;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -81,7 +79,9 @@ public abstract class CassandraClientTestBase {
   }
 
   protected CassandraClientOptions createClientOptions() {
-    return new CassandraClientOptions().setPort(NATIVE_TRANSPORT_PORT);
+    CassandraClientOptions cassandraClientOptions = new CassandraClientOptions();
+    cassandraClientOptions.dataStaxClusterBuilder().withLocalDatacenter("datacenter1");
+    return cassandraClientOptions.addContactPoint(InetSocketAddress.createUnresolved(DEFAULT_HOST, NATIVE_TRANSPORT_PORT));
   }
 
   protected void initializeRandomStringKeyspace(int rowsPerLetter) {
