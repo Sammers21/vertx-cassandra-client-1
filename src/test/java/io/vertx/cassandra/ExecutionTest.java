@@ -58,7 +58,6 @@ public class ExecutionTest extends CassandraClientTestBase {
       }
     }));
   }
-  
 
   @Test
   public void executeWithCollector(TestContext testContext) {
