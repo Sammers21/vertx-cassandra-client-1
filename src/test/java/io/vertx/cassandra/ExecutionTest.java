@@ -71,10 +71,10 @@ public class ExecutionTest extends CassandraClientTestBase {
     );
     String insert = "INSERT INTO names.names_by_first_letter (first_letter, name) VALUES (?, ?)";
     client.prepare(insert, testContext.asyncAssertSuccess(prepared -> {
-      BatchStatement batch = BatchStatement.newInstance(BatchType.COUNTER);
-      Stream.of("Paul", "Paulo", "Pavel")
-        .map(name -> prepared.bind(name.substring(0, 1), name))
-        .forEach(boundStatement -> batch.add(boundStatement));
+      BatchStatement batch = BatchStatement.newInstance(BatchType.LOGGED);
+      for (String name : Stream.of("Paul", "Paulo", "Pavel").collect(Collectors.toSet())) {
+        batch = batch.add(prepared.bind(name.substring(0, 1), name));
+      }
       client.execute(batch, testContext.asyncAssertSuccess(exec -> {
         String query = "select name from names.names_by_first_letter where first_letter = 'P'";
         client.execute(query, collector, testContext.asyncAssertSuccess(result -> {
