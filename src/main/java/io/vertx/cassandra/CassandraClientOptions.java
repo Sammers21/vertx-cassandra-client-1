@@ -41,7 +41,7 @@ public class CassandraClientOptions {
    * Default host for connecting with Cassandra service.
    */
   public static final String DEFAULT_HOST = "localhost";
-  
+
   private CqlSessionBuilder builder;
   private String keyspace;
 
@@ -79,12 +79,12 @@ public class CassandraClientOptions {
   }
 
   /**
-   * Set a list of hosts, where some of cluster nodes is located.
+   *  Adds a contact point to use for the initial connection to the cluster.
    *
    * @param contactPoints the list of hosts
    * @return a reference to this, so the API can be used fluently
    */
-  public CassandraClientOptions setContactPoints(List<InetSocketAddress> contactPoints) {
+  public CassandraClientOptions addContactPoints(List<InetSocketAddress> contactPoints) {
     for (InetSocketAddress contactPoint : contactPoints) {
       builder.addContactPoint(contactPoint);
     }
@@ -92,7 +92,7 @@ public class CassandraClientOptions {
   }
 
   /**
-   * Add a address, where a cluster node is located.
+   * Adds a contact point to use for the initial connection to the cluster
    * @param address the address
    * @return  a reference to this, so the API can be used fluently
    */
